@@ -1,4 +1,4 @@
-Sequential Feature Selection Results for Extended Dataset:
+Sequential Feature Selection Results:
 =========================================================
 
 File: data/features/features_ext_4s.csv

@@ -197,7 +197,7 @@ class DTClassifier:
 
         # Save detailed SFS results to the specified result file
         with open(sfs_extended_results, "w") as results:
-            results.write("Sequential Feature Selection Results for Extended Dataset:\n")
+            results.write("Sequential Feature Selection Results:\n")
             results.write("=========================================================\n\n")
             results.write(f"File: {best_file}\n")
             results.write(f"Final Selected Features: {selected_features}\n")
