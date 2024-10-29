@@ -1,0 +1,17 @@
+Sequential Feature Selection Results for Extended Dataset:
+=========================================================
+
+File: data/features/features_ext_4s.csv
+Final Selected Features: ['std_x', 'median_x', 'rms_x', 'rms_y', 'std_z', 'rms_z']
+Final Accuracy with Selected Features: 99.61%
+
+Accuracy at Each Step of SFS:
+Step 1: Selected Feature = ['std_x'], Accuracy = 84.82%
+Step 2: Selected Feature = ['std_x', 'median_x'], Accuracy = 97.21%
+Step 3: Selected Feature = ['std_x', 'median_x', 'rms_x'], Accuracy = 97.78%
+Step 4: Selected Feature = ['std_x', 'median_x', 'rms_x', 'rms_y'], Accuracy = 98.28%
+Step 5: Selected Feature = ['std_x', 'median_x', 'rms_x', 'rms_y', 'std_z'], Accuracy = 99.39%
+Step 6: Selected Feature = ['std_x', 'median_x', 'rms_x', 'rms_y', 'std_z', 'rms_z'], Accuracy = 99.61%
+
+========================================
+
