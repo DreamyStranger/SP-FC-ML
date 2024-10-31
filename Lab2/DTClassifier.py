@@ -151,70 +151,76 @@ class DTClassifier:
         else:
             print("No best extended dataset identified. Please run 'run_all_extended_datasets()' first.")
 
-    def perform_sfs(self):
+    def perform_sfs(self, extra=None):
         """
         Runs Sequential Feature Selection on the best-performing dataset overall.
-        Uses cross-validation within SFS to select features and track performance at each step.
+        If an extra file is specified, also performs SFS on that dataset.
+        Results are saved in the same file for both datasets.
         """
         # Determine the file with the highest accuracy
-        if self.best_accuracy >= self.extended_best_accuracy:
-            best_file = os.path.join(self.feature_dir, self.best_file)
-        else:
-            best_file = os.path.join(self.feature_dir, self.extended_best_file) 
-        
-        print(f"Performing SFS on the best dataset: {best_file}")
+        best_file = os.path.join(self.feature_dir, self.extended_best_file)
+        files_to_process = [(best_file, "best")]
 
-        # Define result file for SFS
-        sfs_extended_results = self.results_file.replace(".txt", "_sfs.txt")
+        # Include extra file if provided
+        if extra is not None:
+            extra_file = os.path.join(self.feature_dir, extra)
+            files_to_process.append((extra_file, "extra"))
 
-        # Load data for the file
-        X, y = self.load_data(best_file)
-        
-        # Set up cross-validation with a fixed random seed
-        cv = KFold(n_splits=10, shuffle=True, random_state=42)
+        # Define the result file for SFS (same file for both datasets)
+        sfs_results_file = self.results_file.replace(".txt", "_sfs_combined.txt")
 
-        # Initialize Sequential Feature Selector with cross-validation
-        sfs = SequentialFeatureSelector(
-            self.model,
-            n_features_to_select="auto",  # Let SFS choose the best subset automatically
-            direction="forward",
-            scoring="accuracy",
-            cv=cv
-        )
-        
-        # Fit the SFS model
-        sfs.fit(X, y)
-        selected_features = X.columns[sfs.get_support()].tolist()
-        
-        # Track accuracies as features are added
-        step_accuracies = []
-        features_subset = []
+        with open(sfs_results_file, "w") as results:
+            for file_path, file_label in files_to_process:
+                print(f"Performing SFS on the {file_label} dataset: {file_path}")
 
-        for i in range(1, len(selected_features) + 1):
-            temp_features = selected_features[:i]
-            scores = cross_val_score(self.model, X[temp_features], y, cv=cv, scoring="accuracy")
-            step_accuracies.append(scores.mean())
+                # Load data for the file
+                X, y = self.load_data(file_path)
+                
+                # Set up cross-validation with a fixed random seed
+                cv = KFold(n_splits=10, shuffle=True, random_state=42)
 
-        # Save detailed SFS results to the specified result file
-        with open(sfs_extended_results, "w") as results:
-            results.write("Sequential Feature Selection Results:\n")
-            results.write("=========================================================\n\n")
-            results.write(f"File: {best_file}\n")
-            results.write(f"Final Selected Features: {selected_features}\n")
-            results.write(f"Final Accuracy with Selected Features: {step_accuracies[-1] * 100:.2f}%\n")
-            
-            # Log accuracy at each step as features are added
-            results.write("\nAccuracy at Each Step of SFS:\n")
-            for step, (feature, accuracy) in enumerate(zip(selected_features, step_accuracies), 1):
-                features_subset.append(feature)
-                results.write(f"Step {step}: Selected Feature = {features_subset}, Accuracy = {accuracy * 100:.2f}%\n")
-            
-            results.write("\n" + "="*40 + "\n\n")
+                # Initialize Sequential Feature Selector with cross-validation
+                sfs = SequentialFeatureSelector(
+                    self.model,
+                    n_features_to_select="auto",  # Let SFS choose the best subset automatically
+                    direction="forward",
+                    scoring="accuracy",
+                    cv=cv
+                )
+                
+                # Fit the SFS model
+                sfs.fit(X, y)
+                selected_features = X.columns[sfs.get_support()].tolist()
+                
+                # Track accuracies as features are added
+                step_accuracies = []
+                features_subset = []
 
-        # Print final results
-        print(f"Final selected features from {best_file}: {selected_features}")
-        print(f"Final cross-validation accuracy with selected features from {best_file}: {step_accuracies[-1] * 100:.2f}%")
-        print("Detailed SFS process with cross-validation has been saved to the results file.")
+                for i in range(1, len(selected_features) + 1):
+                    temp_features = selected_features[:i]
+                    scores = cross_val_score(self.model, X[temp_features], y, cv=cv, scoring="accuracy")
+                    step_accuracies.append(scores.mean())
+
+                # Write detailed SFS results for this dataset to the combined results file
+                results.write(f"Sequential Feature Selection Results for {file_label} dataset:\n")
+                results.write("=========================================================\n\n")
+                results.write(f"File: {file_path}\n")
+                results.write(f"Final Selected Features: {selected_features}\n")
+                results.write(f"Final Accuracy with Selected Features: {step_accuracies[-1] * 100:.2f}%\n")
+                
+                # Log accuracy at each step as features are added
+                results.write("\nAccuracy at Each Step of SFS:\n")
+                for step, (feature, accuracy) in enumerate(zip(selected_features, step_accuracies), 1):
+                    features_subset.append(feature)
+                    results.write(f"Step {step}: Selected Feature = {features_subset}, Accuracy = {accuracy * 100:.2f}%\n")
+                
+                results.write("\n" + "="*40 + "\n\n")
+
+                # Print final results for this dataset
+                print(f"Final selected features from {file_label} dataset ({file_path}): {selected_features}")
+                print(f"Final cross-validation accuracy with selected features from {file_label} dataset: {step_accuracies[-1] * 100:.2f}%")
+                print("Detailed SFS process with cross-validation has been saved to the combined results file.")
+
 
 
     def run(self):
@@ -238,7 +244,7 @@ class DTClassifier:
 
         # Run SFS on the best dataset overall
         print("\nStarting Sequential Feature Selection (SFS) on the best dataset...")
-        self.perform_sfs() 
+        self.perform_sfs(extra = "features_ext_3s.csv") 
         print("Sequential Feature Selection complete.\n")
 
 

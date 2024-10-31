@@ -15,18 +15,18 @@ Mean Accuracy: 98.74%
 Accuracy per Fold: 99.13%, 97.39%, 99.56%, 97.17%, 99.78%, 97.60%, 100.00%, 99.13%, 99.13%, 98.47%
 ========================================
 
-File: features_ext_4s.csv
-Accuracy: 99.00%
-Classification Report:
-Mean Accuracy: 99.00%
-Accuracy per Fold: 100.00%, 98.69%, 99.35%, 98.47%, 99.56%, 97.38%, 100.00%, 99.78%, 98.47%, 98.25%
-========================================
-
 File: features_ext_3s.csv
 Accuracy: 98.98%
 Classification Report:
 Mean Accuracy: 98.98%
 Accuracy per Fold: 100.00%, 99.35%, 98.91%, 97.60%, 99.35%, 97.17%, 98.69%, 100.00%, 99.34%, 99.34%
+========================================
+
+File: features_ext_4s.csv
+Accuracy: 99.00%
+Classification Report:
+Mean Accuracy: 99.00%
+Accuracy per Fold: 100.00%, 98.69%, 99.35%, 98.47%, 99.56%, 97.38%, 100.00%, 99.78%, 98.47%, 98.25%
 ========================================
 
 Best Performing Extended Dataset:
